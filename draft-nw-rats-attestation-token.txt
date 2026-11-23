@@ -2,7 +2,7 @@
 
 
 
-RATS                                                        Y. Deshpande
+Remote ATtestation ProcedureS                               Y. Deshpande
 Internet-Draft                                                   Arm Ltd
 Intended status: Informational                          23 November 2026
 Expires: 27 May 2027
@@ -26,6 +26,18 @@ Abstract
    This informational document is published as an independent submission
    to improve interoperability with Arm's architecture.  It is not a
    standard nor a product of the IETF.
+
+Discussion Venues
+
+   This note is to be removed before publishing as an RFC.
+
+   Discussion of this document takes place on the Remote ATtestation
+   ProcedureS Working Group mailing list (rats@ietf.org), which is
+   archived at https://mailarchive.ietf.org/arch/browse/rats/.
+
+   Source for this draft and an issue tracker can be found at
+   https://github.com/arm-attestation-drafts/draft-nw-rats-attestation-
+   token.
 
 Status of This Memo
 
@@ -73,7 +85,29 @@ Table of Contents
 
 1.  Introduction
 
-   TODO Introduction
+   A Client in Normal World host running on an Arm platform can request
+   an attestation token from the underlying platform.
+
+   As outlined in the RATS Architecture [RFC9334], an Attester produces
+   a signed collection of Claims that constitutes Evidence about its
+   target environment.  This document focuses on the output provided by
+   requests from the Normal World hoast for an attestation token that
+   covers the state of Arm Platform.  This output corresponds to
+   Evidence in [RFC9334] and, as a design decision, the Normal World
+   attestation token is a profile of the Entity Attestation Token (EAT)
+   [EAT].  Note that there are other profiles of EAT available, such as
+   [I-D.kdyxy-rats-tdx-eat-profile] and [I-D.mandyam-rats-qwestoken],
+   for use with different use cases and by different attestation
+   technologies.
+
+   Since the Normal World tokens are consumed by services outside the
+   device, there is an actual need to ensure interoperability.
+   Interoperability needs are addressed here by describing the exact
+   syntax and semantics of the attestation claims, and defining the way
+   these claims are encoded and cryptographically protected.
+
+   As mentioned in the abstract, this memo documents a vendor extension
+   to the RATS architecture, and is not a standard.
 
 2.  Conventions and Definitions
 
@@ -97,6 +131,30 @@ Table of Contents
 5.  References
 
 5.1.  Normative References
+
+   [CMW]      Birkholz, H., Smith, N., Fossati, T., Tschofenig, H., and
+              D. Glaze, "RATS Conceptual Messages Wrapper (CMW)", Work
+              in Progress, Internet-Draft, draft-ietf-rats-msg-wrap-23,
+              11 December 2025, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-rats-msg-wrap-23>.
+
+   [COSE-ALGS]
+              Schaad, J., "CBOR Object Signing and Encryption (COSE):
+              Initial Algorithms", RFC 9053, DOI 10.17487/RFC9053,
+              August 2022, <https://www.rfc-editor.org/rfc/rfc9053>.
+
+   [EAT]      Lundblade, L., Mandyam, G., O'Donoghue, J., and C.
+              Wallace, "The Entity Attestation Token (EAT)", Work in
+              Progress, Internet-Draft, draft-ietf-rats-eat-31, 6
+              September 2024, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-rats-eat-31>.
+
+   [EAT-MEDIATYPES]
+              Lundblade, L., Birkholz, H., and T. Fossati, "EAT Media
+              Types", Work in Progress, Internet-Draft, draft-ietf-rats-
+              eat-media-type-12, 3 November 2024,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-rats-
+              eat-media-type-12>.
 
    [I-D.ietf-rats-corim]
               Birkholz, H., Fossati, T., Deshpande, Y., Smith, N., and
@@ -124,12 +182,37 @@ Table of Contents
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/rfc/rfc8174>.
 
+   [STD94]    Bormann, C. and P. Hoffman, "Concise Binary Object
+              Representation (CBOR)", STD 94, RFC 8949,
+              DOI 10.17487/RFC8949, December 2020,
+              <https://www.rfc-editor.org/rfc/rfc8949>.
+
+   [STD96]    Schaad, J., "CBOR Object Signing and Encryption (COSE):
+              Structures and Process", STD 96, RFC 9052,
+              DOI 10.17487/RFC9052, August 2022,
+              <https://www.rfc-editor.org/rfc/rfc9052>.
+
    [TBB]      Arm, "Trusted Board Boot", 30 December 2024,
               <https://trustedfirmware-
               a.readthedocs.io/en/stable/design/trusted-board-
               boot.html>.
 
 5.2.  Informative References
+
+   [I-D.kdyxy-rats-tdx-eat-profile]
+              Kostal, G., Dittakavi, S., Yeluri, R., Xia, H., and J. Yu,
+              "EAT profile for Intel(r) Trust Domain Extensions (TDX)
+              attestation result", Work in Progress, Internet-Draft,
+              draft-kdyxy-rats-tdx-eat-profile-02, 13 December 2024,
+              <https://datatracker.ietf.org/doc/html/draft-kdyxy-rats-
+              tdx-eat-profile-02>.
+
+   [I-D.mandyam-rats-qwestoken]
+              Mandyam, G., Sekhar, V., and S. Mohammed, "The Qualcomm
+              Wireless Edge Services (QWES) Attestation Token", Work in
+              Progress, Internet-Draft, draft-mandyam-rats-qwestoken-00,
+              1 November 2019, <https://datatracker.ietf.org/doc/html/
+              draft-mandyam-rats-qwestoken-00>.
 
    [RFC9334]  Birkholz, H., Thaler, D., Richardson, M., Smith, N., and
               W. Pan, "Remote ATtestation procedureS (RATS)
