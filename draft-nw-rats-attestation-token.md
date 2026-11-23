@@ -55,9 +55,22 @@ normative:
     title: Trusted Board Boot
     target: https://trustedfirmware-a.readthedocs.io/en/stable/design/trusted-board-boot.html
     date: 2024-12-30
+  STD94:
+    -: cbor
+    =: RFC8949
+  STD96:
+    -: cose
+    =: RFC9052
+  COSE-ALGS: RFC9053
+  EAT: I-D.ietf-rats-eat
+  EAT-MEDIATYPES: I-D.ietf-rats-eat-media-type
+  CMW: I-D.draft-ietf-rats-msg-wrap
+
 
 informative:
   RFC9334: rats-arch
+  I-D.kdyxy-rats-tdx-eat-profile:
+  I-D.mandyam-rats-qwestoken:
 
 entity:
   SELF: "RFCthis"
