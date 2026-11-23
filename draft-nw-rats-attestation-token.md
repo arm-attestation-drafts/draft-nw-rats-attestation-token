@@ -4,18 +4,18 @@ abbrev: "NW Attestation Token"
 category: info
 
 docname: draft-nw-rats-attestation-token-latest
-submissiontype: IETF 
+submissiontype: IETF
 number:
 date:
 consensus: true
 v: 3
-area: Security
-workgroup: RATS
+area: "Security"
+workgroup: "Remote ATtestation ProcedureS"
 date: {DATE}
 category: info
 ipr: trust200902
-# area: Security
-# workgroup: RATS
+area: "Security"
+workgroup: "Remote ATtestation ProcedureS"
 
 stand_alone: yes
 pi:
