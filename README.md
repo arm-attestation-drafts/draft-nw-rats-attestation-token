@@ -1,6 +1,6 @@
 <!-- regenerate: on (set to off if you edit this file) -->
 
-# Arm's Normal World Reference Attestation Token
+# Arm's Normal World Platform Attestation Token
 
 This is the working area for the individual Internet-Draft, "Arm's Normal World Reference Attestation Token".
 
