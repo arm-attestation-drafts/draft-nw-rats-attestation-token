@@ -1,0 +1,10 @@
+arm-platform-client-id-label = 2394 ; Arm platform namespace
+
+arm-platform-client-id-nw = 3 ; TO DO check the correct value for NW Client
+
+arm-platform-client-id-type =
+    arm-platform-client-id-rmsd
+
+arm-platform-client-id = (
+    arm-platform-client-id-label => arm-platform-client-id-type
+)

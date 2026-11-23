@@ -1,0 +1,8 @@
+arm-platform-profile-label = 265 ; EAT profile
+
+; To do check, if 1.0.0 is more appropriate here ?
+arm-platform-profile-type = "tag:arm.com,2026:arm_nw_platform#2.0.0"
+
+arm-platform-profile = (
+    arm-platform-profile-label => arm-platform-profile-type
+)
