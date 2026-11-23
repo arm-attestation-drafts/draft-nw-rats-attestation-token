@@ -97,7 +97,13 @@ This informational document is published as an independent submission to improve
 
 # Introduction {#intro}
 
-TODO Introduction
+A Client in Normal World host running on an Arm platform can request an attestation token from the underlying platform.
+
+As outlined in the RATS Architecture {{RFC9334}}, an Attester produces a signed collection of Claims that constitutes Evidence about its target environment. This document focuses on the output provided by requests from the Normal World hoast for an attestation token that covers the state of Arm Platform. This output corresponds to Evidence in {{RFC9334}} and, as a design decision, the Normal World attestation token is a profile of the Entity Attestation Token (EAT) {{EAT}}. Note that there are other profiles of EAT available, such as {{I-D.kdyxy-rats-tdx-eat-profile}} and {{I-D.mandyam-rats-qwestoken}}, for use with different use cases and by different attestation technologies.
+
+Since the Normal World tokens are consumed by services outside the device, there is an actual need to ensure interoperability. Interoperability needs are addressed here by describing the exact syntax and semantics of the attestation claims, and defining the way these claims are encoded and cryptographically protected.
+
+As mentioned in the abstract, this memo documents a vendor extension to the RATS architecture, and is not a standard.
 
 
 # Conventions and Definitions
