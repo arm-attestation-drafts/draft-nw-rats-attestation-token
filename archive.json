@@ -1,0 +1,109 @@
+{
+  "magic": "E!vIA5L86J2I",
+  "timestamp": "2026-11-24T08:05:00.604202+00:00",
+  "repo": "arm-attestation-drafts/draft-nw-rats-attestation-token",
+  "labels": [
+    {
+      "name": "accessibility",
+      "description": "Barrier affecting people with disabilities",
+      "color": "f143ab"
+    },
+    {
+      "name": "bug",
+      "description": "Something isn't working",
+      "color": "d73a4a"
+    },
+    {
+      "name": "documentation",
+      "description": "Improvements or additions to documentation",
+      "color": "0075ca"
+    },
+    {
+      "name": "duplicate",
+      "description": "This issue or pull request already exists",
+      "color": "cfd3d7"
+    },
+    {
+      "name": "enhancement",
+      "description": "New feature or request",
+      "color": "a2eeef"
+    },
+    {
+      "name": "good first issue",
+      "description": "Good for newcomers",
+      "color": "7057ff"
+    },
+    {
+      "name": "help wanted",
+      "description": "Extra attention is needed",
+      "color": "008672"
+    },
+    {
+      "name": "invalid",
+      "description": "This doesn't seem right",
+      "color": "e4e669"
+    },
+    {
+      "name": "question",
+      "description": "Further information is requested",
+      "color": "d876e3"
+    },
+    {
+      "name": "wontfix",
+      "description": "This will not be worked on",
+      "color": "ffffff"
+    }
+  ],
+  "issues": [],
+  "pulls": [
+    {
+      "number": 1,
+      "id": "PR_kwDOV4wizs8AAAABRTiGpA",
+      "title": "Build cddl",
+      "url": "https://github.com/arm-attestation-drafts/draft-nw-rats-attestation-token/pull/1",
+      "state": "MERGED",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2026-11-23T15:47:30Z",
+      "updatedAt": "2026-11-23T15:57:49Z",
+      "baseRepository": "arm-attestation-drafts/draft-nw-rats-attestation-token",
+      "baseRefName": "main",
+      "baseRefOid": "be44759b3263258f3d8212a765ce3cf3a4590828",
+      "headRepository": "arm-attestation-drafts/draft-nw-rats-attestation-token",
+      "headRefName": "build-cddl",
+      "headRefOid": "142aa3539bb753f602362f0341217a60fd7869d8",
+      "closedAt": "2026-11-23T15:57:43Z",
+      "mergedAt": "2026-11-23T15:57:43Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "7fc0ee28f9e49946c287df5afd9a939dfed7a83f"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOV4wizs8AAAABZxkW-Q",
+          "commit": {
+            "abbreviatedOid": "5a96875"
+          },
+          "author": "github-actions",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-11-23T15:47:52Z",
+          "updatedAt": "2026-11-23T15:47:52Z",
+          "comments": [
+            {
+              "originalPosition": 24,
+              "body": "````suggestion\nThe platform token can be combined with the specific claims or individual tokens from the Normal world or Secure World.\n````",
+              "createdAt": "2026-11-23T15:47:52Z",
+              "updatedAt": "2026-11-23T15:47:52Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
