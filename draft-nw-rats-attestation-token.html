@@ -1194,6 +1194,17 @@ svg {
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.4.2.1">
                     <p id="section-toc.1-1.2.2.4.2.1.1"><a href="#section-2.4.1" class="auto internal xref">2.4.1</a>.  <a href="#name-software-components" class="internal xref">Software Components</a></p>
 </li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.4.2.2">
+                    <p id="section-toc.1-1.2.2.4.2.2.1"><a href="#section-2.4.2" class="auto internal xref">2.4.2</a>.  <a href="#name-arm-platform-hash-algorithm" class="internal xref">Arm Platform Hash Algorithm ID</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.5">
+                <p id="section-toc.1-1.2.2.5.1"><a href="#section-2.5" class="auto internal xref">2.5</a>.  <a href="#name-verification-claims" class="internal xref">Verification Claims</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.5.2.1">
+                    <p id="section-toc.1-1.2.2.5.2.1.1"><a href="#section-2.5.1" class="auto internal xref">2.5.1</a>.  <a href="#name-verification-service-indica" class="internal xref">Verification Service Indicator</a></p>
+</li>
                 </ul>
 </li>
             </ul>
@@ -1733,6 +1744,71 @@ hash algorithm used to compute the corresponding Measurement Value.
 The string <span class="bcp14">SHOULD</span> be encoded according to "Hash Name String" in the "Named Information Hash Algorithm Registry" <span>[<a href="#IANA.named-information" class="cite xref">IANA.named-information</a>]</span>.<a href="#section-2.4.1.5-1" class="pilcrow">¶</a></p>
 </section>
 </div>
+</section>
+</div>
+<div id="sec-arm-platform-hash-algm-id">
+<section id="section-2.4.2">
+          <h4 id="name-arm-platform-hash-algorithm">
+<a href="#section-2.4.2" class="section-number selfRef">2.4.2. </a><a href="#name-arm-platform-hash-algorithm" class="section-name selfRef">Arm Platform Hash Algorithm ID</a>
+          </h4>
+<p id="section-2.4.2-1">The Arm platform hash algorithm ID claim is a text string that identifies
+the algorithm used to calculate the extended measurements in the Arm platform token.<a href="#section-2.4.2-1" class="pilcrow">¶</a></p>
+<p id="section-2.4.2-2">The string <span class="bcp14">SHOULD</span> be encoded according to "Hash Name String" in the "Named
+Information Hash Algorithm Registry" <span>[<a href="#IANA.named-information" class="cite xref">IANA.named-information</a>]</span>.<a href="#section-2.4.2-2" class="pilcrow">¶</a></p>
+<p id="section-2.4.2-3">The Arm platform hash algorithm ID claim <span class="bcp14">MUST</span> be present in an Arm platform token.<a href="#section-2.4.2-3" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-2.4.2-4">
+<pre>
+arm-platform-hash-algo-id-label = 2402 ; Arm platform range
+                                       ; TBD: add to IANA registration
+
+arm-platform-hash-algo-id = (
+    arm-platform-hash-algo-id-label =&gt; text
+)
+</pre><a href="#section-2.4.2-4" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="verification-claims">
+<section id="section-2.5">
+        <h3 id="name-verification-claims">
+<a href="#section-2.5" class="section-number selfRef">2.5. </a><a href="#name-verification-claims" class="section-name selfRef">Verification Claims</a>
+        </h3>
+<p id="section-2.5-1">The following claims are part of the Arm Platform token with an aim to help receivers, including relying parties, with the
+processing of the received attestation Evidence.<a href="#section-2.5-1" class="pilcrow">¶</a></p>
+<div id="sec-verification-service-indicator">
+<section id="section-2.5.1">
+          <h4 id="name-verification-service-indica">
+<a href="#section-2.5.1" class="section-number selfRef">2.5.1. </a><a href="#name-verification-service-indica" class="section-name selfRef">Verification Service Indicator</a>
+          </h4>
+<p id="section-2.5.1-1">The Verification Service Indicator claim is a hint used by a relying party to
+locate a verification service for the token. The value is a text string that
+can be used to locate the service (typically, a URI specifying the address of
+the verification service API). A Relying Party may choose to ignore this claim
+in favor of other information.<a href="#section-2.5.1-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-2.5.1-2">
+<pre>
+; Arm platform verification service
+arm-platform-verification-service-label = 2400
+arm-platform-verification-service-type = text
+
+arm-platform-verification-service = (
+    arm-platform-verification-service-label =&gt;
+        arm-platform-verification-service-type
+)
+</pre><a href="#section-2.5.1-2" class="pilcrow">¶</a>
+</div>
+<p id="section-2.5.1-3">It is assumed that the relying party is pre-configured with a list of trusted
+verification services and that the contents of this hint can be used to look
+up the correct one. Under no circumstances must the relying party be tricked
+into contacting an unknown and untrusted verification service since the
+returned Attestation Result cannot be relied on.<a href="#section-2.5.1-3" class="pilcrow">¶</a></p>
+<p id="section-2.5.1-4">Note: This hint requires the relying party to parse the content of the
+Arm Platform token. Since the relying party may not be in possession of a trust
+anchor to verify the digital signature, it uses the hint in the same way
+as it would treat any other information provided by an external party,
+which includes attacker-provided data.<a href="#section-2.5.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>

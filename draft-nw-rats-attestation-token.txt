@@ -85,6 +85,9 @@ Table of Contents
        2.3.6.  Arm Platform TBB ROTPK
      2.4.  Software Inventory Claims
        2.4.1.  Software Components
+       2.4.2.  Arm Platform Hash Algorithm ID
+     2.5.  Verification Claims
+       2.5.1.  Verification Service Indicator
    3.  Conventions and Definitions
    4.  Security Considerations
    5.  IANA Considerations
@@ -521,6 +524,61 @@ arm-platform-tbb-rotpk = (
    Measurement Value.  The string SHOULD be encoded according to "Hash
    Name String" in the "Named Information Hash Algorithm Registry"
    [IANA.named-information].
+
+2.4.2.  Arm Platform Hash Algorithm ID
+
+   The Arm platform hash algorithm ID claim is a text string that
+   identifies the algorithm used to calculate the extended measurements
+   in the Arm platform token.
+
+   The string SHOULD be encoded according to "Hash Name String" in the
+   "Named Information Hash Algorithm Registry" [IANA.named-information].
+
+   The Arm platform hash algorithm ID claim MUST be present in an Arm
+   platform token.
+
+  arm-platform-hash-algo-id-label = 2402 ; Arm platform range
+                                         ; TBD: add to IANA registration
+
+  arm-platform-hash-algo-id = (
+      arm-platform-hash-algo-id-label => text
+  )
+
+2.5.  Verification Claims
+
+   The following claims are part of the Arm Platform token with an aim
+   to help receivers, including relying parties, with the processing of
+   the received attestation Evidence.
+
+2.5.1.  Verification Service Indicator
+
+   The Verification Service Indicator claim is a hint used by a relying
+   party to locate a verification service for the token.  The value is a
+   text string that can be used to locate the service (typically, a URI
+   specifying the address of the verification service API).  A Relying
+   Party may choose to ignore this claim in favor of other information.
+
+   ; Arm platform verification service
+   arm-platform-verification-service-label = 2400
+   arm-platform-verification-service-type = text
+
+   arm-platform-verification-service = (
+       arm-platform-verification-service-label =>
+           arm-platform-verification-service-type
+   )
+
+   It is assumed that the relying party is pre-configured with a list of
+   trusted verification services and that the contents of this hint can
+   be used to look up the correct one.  Under no circumstances must the
+   relying party be tricked into contacting an unknown and untrusted
+   verification service since the returned Attestation Result cannot be
+   relied on.
+
+   Note: This hint requires the relying party to parse the content of
+   the Arm Platform token.  Since the relying party may not be in
+   possession of a trust anchor to verify the digital signature, it uses
+   the hint in the same way as it would treat any other information
+   provided by an external party, which includes attacker-provided data.
 
 3.  Conventions and Definitions
 
