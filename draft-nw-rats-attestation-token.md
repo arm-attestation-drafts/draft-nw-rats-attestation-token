@@ -278,7 +278,95 @@ The Arm platform client ID claim MUST be present in a CCA platform token.
 {::include cddl/platform/arm-platform-client-id.cddl}
 ~~~
 
-/* TO REVIEW TILL HERE AND THEN DELETE */
+
+### Arm Platform TBB ROTPK
+{: #sec-arm-platform-tbb-rotpk}
+
+Where an implementation of the Arm platform follows the Trusted Board Boot specification {{TBB}}, the platform
+will include several provisioned public key identifiers which are used to establish a chain of trust.
+The Arm platform TBB ROTPK claim is used to provide this information to a verifier.
+
+The Arm platform tbb rotpk claim is OPTIONAL in a Normal World Arm platform token
+
+~~~
+{::include cddl/platform/arm-platform-tbb-rotpk.cddl}
+~~~
+
+## Software Inventory Claims
+
+### Software Components
+{: #sec-sw-components }
+
+The Software Components claim is a list of software components which can affect
+the behavior of the Arm platform.
+
+This claim MUST be present in a Arm Platform attestation token.
+
+Each entry in the Software Components list describes one software component
+using the attributes described in the following subsections.
+Unless explicitly stated, the presence of an attribute is OPTIONAL.
+
+It is expected that an implementation will describe the expected software
+component values within the profile.
+In some implementations, a software component may consist of a configuration data item.
+
+Note that, as described in {{RFC9334}}, a relying party will typically see the
+result of the appraisal process from the Verifier in form of an Attestation
+Result, rather than the Arm Platform token from the attesting endpoint.
+Therefore, a relying party is not expected to understand the Software
+Components claim.  Instead, it is for the Verifier to check this claim against
+the available Reference Values and provide an answer in form of an "high level"
+Attestation Result, which may or may not include the original Software
+Components claim.
+
+~~~
+{::include cddl/platform/arm-platform-software-components.cddl}
+~~~
+
+#### Component Type
+
+The Component Type attribute (key=1) is a short string representing the role of
+this software component. This attribute is intended for use as a hint to help
+the verifier understand how to evaluate the CCA platform software component
+measurement value.
+
+This attribute is optional in an Arm Platform software component.
+
+#### Measurement Value
+
+The Measurement Value attribute (key=2) represents a hash of the state of the software component
+in memory at the time it was initialized. The measurement values are implemented such that the values can
+only be extended rather than set. The values are initialised to 0, so the value reported in attestation will be
+H( 0 || H(software component)).
+TODO Check if LFA is supported on this profile and then update?
+
+The value MUST be a cryptographic hash of 256 bits or stronger.
+
+This attribute MUST be present in an Arm Platform software component.
+
+#### Version
+
+The Version attribute (key=4) is the issued software version in the form of a text string.
+The meaning of this string is defined by the software component vendor.
+
+This attribute is optional in an Arm Platform software component.
+
+#### Signer ID
+
+The Signer ID attribute (key=5) uniquely identifies the signer of the software component.
+The identification is typically accomplished by hashing the signer's public key.
+The value of this attribute will correspond to the
+entry in the original manifest for the component. This can be used by a
+Verifier to ensure the components were signed by an expected trusted source.
+
+This attribute MUST be present in an Arm Platform software component.
+
+#### Measurement Description
+
+The Measurement Description attribute (key=6) contains a string identifying the
+hash algorithm used to compute the corresponding Measurement Value.
+The string SHOULD be encoded according to "Hash Name String" in the "Named Information Hash Algorithm Registry" {{!IANA.named-information}}.
+
 
 # Conventions and Definitions
 
