@@ -4,8 +4,8 @@
 
 Remote ATtestation ProcedureS                               Y. Deshpande
 Internet-Draft                                                   Arm Ltd
-Intended status: Informational                          23 November 2026
-Expires: 27 May 2027
+Intended status: Informational                          26 November 2026
+Expires: 30 May 2027
 
 
              Arm's Normal World Platform Attestation Token
@@ -51,7 +51,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 27 May 2027.
+   This Internet-Draft will expire on 30 May 2027.
 
 Copyright Notice
 
@@ -70,12 +70,24 @@ Copyright Notice
 Table of Contents
 
    1.  Introduction
-   2.  Conventions and Definitions
-   3.  Security Considerations
-   4.  IANA Considerations
-   5.  References
-     5.1.  Normative References
-     5.2.  Informative References
+   2.  Arm Normal World Platform Claims
+     2.1.  Caller Claims
+       2.1.1.  Platform Challenge
+     2.2.  Target Identification Claims
+       2.2.1.  Arm Platform Implementation ID
+       2.2.2.  Arm Platform Instance ID
+     2.3.  Target State Claims
+       2.3.1.  Normal World Arm Platform Profile Definition
+       2.3.2.  Security Lifecycle
+       2.3.3.  Platform Config
+       2.3.4.  Platform Manufacturing Config
+       2.3.5.  Arm Platform Client ID
+   3.  Conventions and Definitions
+   4.  Security Considerations
+   5.  IANA Considerations
+   6.  References
+     6.1.  Normative References
+     6.2.  Informative References
    Acknowledgments
    Contributors
    Author's Address
@@ -98,9 +110,8 @@ Table of Contents
    technologies.
 
    The platform token can be combined with the specific claims or
-   individual tokens from the Normal world or Secure World.  The Normal
-   World or Secure World claims or token profiles are currently outside
-   the scope of this specification.
+   individual tokens from the Secure World.  The Secure World claims or
+   token profiles are currently outside the scope of this specification.
 
    This document focuses on exact syntax and semantics of the
    attestation claims, and defining the way these claims are encoded and
@@ -109,7 +120,289 @@ Table of Contents
    As mentioned in the abstract, this memo documents a vendor extension
    to the RATS architecture, and is not a standard.
 
-2.  Conventions and Definitions
+2.  Arm Normal World Platform Claims
+
+   The set of claims for the Arm Normal World Platform token are as
+   follows:
+
+   arm-platform-claims = (arm-platform-claim-map)
+
+   arm-platform-claim-map = {
+       arm-platform-profile
+       arm-platform-challenge
+       arm-platform-implementation-id
+       arm-platform-instance-id
+       arm-platform-config
+       arm-platform-lifecycle
+       arm-platform-sw-components
+       ? arm-platform-verification-service
+       arm-platform-hash-algo-id
+       arm-platform-client-id
+       ? arm-platform-manufacturing-config
+       ? arm-platform-tbb-rotpk
+   }
+
+2.1.  Caller Claims
+
+2.1.1.  Platform Challenge
+
+   This claim is used to carry a challenge provided by the relying party
+   to demonstrate freshness of the generated token.
+
+   This claim MUST be present in the Normal World Platform attestation
+   token.
+
+   The [EAT] eat_nonce (claim key 10) is used.  Since the EAT nonce
+   claim offers flexiblity for different attestation technologies, this
+   specifications applies the following constraints to the nonce-type:
+
+   *  The length MUST be either 32, 48, or 64 bytes.
+
+   *  Only a single nonce value is conveyed.  The array notation MUST
+      NOT be used for encoding the nonce value.
+
+   arm-platform-challenge-label = 10
+
+   arm-platform-challenge = (
+       arm-platform-challenge-label => arm-platform-hash-type
+   )
+
+2.2.  Target Identification Claims
+
+   These claims establishes the identity of the Arm platform.
+
+2.2.1.  Arm Platform Implementation ID
+
+   The Implementation ID claim uniquely identifies the implementation of
+   the Arm Platform.  The value of the Arm platform Implementation ID
+   claim can be used by a verification service to locate the details of
+   the Arm platform implementation from an endorser or manufacturer.
+   Such details are used by a verification service to determine the
+   security properties or certification status of the Arm Platform
+   implementation.
+
+   The value and format of the ID is decided by the manufacturer or a
+   particular certification scheme.  For example, the ID could take the
+   form of a product serial number, database ID, or other appropriate
+   identifier.
+
+   This claim MUST be present in an Arm Platform attestation token.
+
+   Note that this identifies the Arm Platform implementation, not a
+   particular instance of the platform.  To uniquely identify an
+   instance, see the Instance ID claim Section 2.2.2.
+
+arm-platform-implementation-id-label = 2396 ; Arm Platform implementation ID
+arm-platform-implementation-id-type = bytes .size 32
+
+arm-platform-implementation-id = (
+    arm-platform-implementation-id-label =>
+        arm-platform-implementation-id-type
+)
+
+2.2.2.  Arm Platform Instance ID
+
+   The Instance ID claim is a unique identifier of the Arm Platform
+   instance.  It can be used by a verifier to help locate an endorsement
+   for the Attestation Key (PAK).
+
+   The EAT ueid (claim key 256) of type RAND is used.  The following
+   constraints apply to the ueid-type:
+
+   *  The length MUST be 33 bytes.
+
+   *  The first byte MUST be 0x01 (RAND) followed by the 32-byte unique
+      identifier.
+
+   eat-ueid-rand-type = bytes .join eat-ueid-rand-fmt
+
+   eat-ueid-rand-fmt = [
+     ; the type byte is 0x01
+     ueid-rand-typ
+     bytes .size 32
+   ]
+
+   ueid-rand-typ = h'01'
+
+   This claim MUST be present in an Arm Platform attestation token.
+
+   arm-platform-instance-id-label = 256 ; EAT ueid
+
+   arm-platform-instance-id-type = eat-ueid-rand-type
+
+   arm-platform-instance-id = (
+       arm-platform-instance-id-label => arm-platform-instance-id-type
+   )
+
+2.3.  Target State Claims
+
+2.3.1.  Normal World Arm Platform Profile Definition
+
+   The Normal World Arm platform profile claim identifies the EAT
+   profile to which the Arm platform token conforms.  This allows a
+   receiver to assign the intended semantics to the rest of the claims
+   found in the token.
+
+   The EAT eat_profile (claim key 265) is used.
+
+   The format of the Arm platform profile claim is defined as a text
+   string of value "tag:arm.com,2026:cca_platform#2.0.0".
+
+   This claim MUST be present in an Arm Platform attestation token.
+
+   arm-platform-profile-label = 265 ; EAT profile
+
+   ; To do check, if 1.0.0 is more appropriate here ?
+   arm-platform-profile-type = "tag:arm.com,2026:arm_nw_platform#1.0.0"
+
+   arm-platform-profile = (
+       arm-platform-profile-label => arm-platform-profile-type
+   )
+
+2.3.2.  Security Lifecycle
+
+   The Security Lifecycle claim represents the current lifecycle state
+   of the Arm Platform.
+
+   The state is represented by an integer that is divided as follows:
+
+   *  major[15:8] - Arm Platform security lifecycle state, and
+
+   *  minor[7:0] - IMPLEMENTATION DEFINED state.
+
+   A non debugged Arm platform will be in arm-platform-lifecycle-secured
+   state.
+
+   This claim MUST be present in a CCA Platform attestation token.
+
+   TODO, check the correct lifecycle state diagram and add it in the
+   subsequent revision.
+
+   The CDDL representation is shown below.  Table 1 provides the
+   mappings between the lifecycle states and the associated description.
+
+arm-platform-lifecycle-label = 2395 ; Platform lifecycle label
+
+arm-platform-lifecycle-unknown-type = 0x0000..0x00ff
+arm-platform-lifecycle-assembly-and-test-type = 0x1000..0x10ff
+arm-platform-lifecycle-platform-rot-provisioning-type = 0x2000..0x20ff
+arm-platform-lifecycle-secured-type = 0x3000..0x30ff
+arm-platform-lifecycle-non-platform-rot-debug-type = 0x4000..0x40ff
+arm-platform-lifecycle-recoverable-platform-rot-debug-type = 0x5000..0x50ff
+arm-platform-lifecycle-decommissioned-type = 0x6000..0x60ff
+
+arm-platform-lifecycle-type =
+    arm-platform-lifecycle-unknown-type /
+    arm-platform-lifecycle-assembly-and-test-type /
+    arm-platform-lifecycle-platform-rot-provisioning-type /
+    arm-platform-lifecycle-secured-type /
+    arm-platform-lifecycle-non-platform-rot-debug-type /
+    arm-platform-lifecycle-recoverable-platform-rot-debug-type /
+    arm-platform-lifecycle-decommissioned-type
+
+arm-platform-lifecycle = (
+    arm-platform-lifecycle-label => arm-platform-lifecycle-type
+)
+
+       +=====================================+====================+
+       | CDDL                                | Lifecycle States   |
+       +=====================================+====================+
+       | arm-platform-lifecycle-unknown-type |                    |
+       +-------------------------------------+--------------------+
+       | arm-platform-lifecycle-assembly-    | Assembly and Test  |
+       | and-test-type                       |                    |
+       +-------------------------------------+--------------------+
+       | arm-platform-lifecycle-platform-    | Arm Platform       |
+       | rot-provisioning-type               | Provisioning       |
+       +-------------------------------------+--------------------+
+       | arm-platform-lifecycle-secured-type | Secured            |
+       +-------------------------------------+--------------------+
+       | arm-platform-lifecycle-non-         | Non-Recoverable    |
+       | platform-rot-debug-type             | Arm Platform Debug |
+       +-------------------------------------+--------------------+
+       | arm-platform-lifecycle-recoverable- | Recoverable Arm    |
+       | platform-rot-debug-type             | Platform Debug     |
+       +-------------------------------------+--------------------+
+       | arm-platform-lifecycle-             | Decommissioned     |
+       | decommissioned-type                 |                    |
+       +-------------------------------------+--------------------+
+
+                    Table 1: Lifecycle States Mappings
+
+2.3.3.  Platform Config
+
+   The Arm platform config claim describes the set of chosen
+   implementation options of the Arm platform.  As an example, these may
+   include a description of the level of physical memory protection
+   which is provided.
+
+   The Arm platform config byte string contains implementation
+   information that is provided by the chip vendor and the device
+   vendor.  TODO Add the System level properties applicable here, when
+   clear identified.
+
+   The layout and encoding of this information is IMPLEMENTATION
+   DEFINED.
+
+   An attestation verifier should use information from the an
+   attestation profile document applicable to the implementation to
+   understand the IMPLEMENTATION DEFINED choices made for this field.
+   Reference values can be accompanied by a bitmask identifying the
+   relevant portion of the platform config claim.
+
+   This claim MUST be present in a Arm Platform attestation token.
+
+   arm-platform-config-label = 2401 ; Arm platform config
+                                    ; TBD: add to IANA registration
+   arm-platform-config-type = bytes
+
+   arm-platform-config = (
+       arm-platform-config-label => arm-platform-config-type
+   )
+
+2.3.4.  Platform Manufacturing Config
+
+   The Arm platform manufacturing config claim represents a record of
+   production phases and testing conducted during the manufacturing
+   process for this instance.
+
+   The Arm platform manufacturing config claim is OPTIONAL in an Arm
+   platform token
+
+   arm-platform-manufacturing-config-label = 2403
+
+   arm-platform-manufacturing-config-type = bytes
+
+   arm-platform-manufacturing-config = (
+       arm-platform-manufacturing-config-label =>
+           arm-platform-manufacturing-config-type
+   )
+
+2.3.5.  Arm Platform Client ID
+
+   The Arm platform client ID claim identifies the security domain from
+   which the attestation token was requested.
+
+   In this profile, it is the Normal World Caller ID value (value=X),
+   set in this claim.
+
+   The Arm platform client ID claim MUST be present in a CCA platform
+   token.
+
+arm-platform-client-id-label = 2394 ; Arm platform namespace
+
+arm-platform-client-id-nw = 3 ; TO DO check the correct value for NW Client
+
+arm-platform-client-id-type =
+    arm-platform-client-id-rmsd
+
+arm-platform-client-id = (
+    arm-platform-client-id-label => arm-platform-client-id-type
+)
+
+   /* TO REVIEW TILL HERE AND THEN DELETE */
+
+3.  Conventions and Definitions
 
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
    "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
@@ -120,17 +413,17 @@ Table of Contents
    The reader is assumed to be familiar with the terms and concepts
    introduced in Section 4 of [RFC9334].
 
-3.  Security Considerations
+4.  Security Considerations
 
    TODO Security
 
-4.  IANA Considerations
+5.  IANA Considerations
 
    This document has no IANA actions.
 
-5.  References
+6.  References
 
-5.1.  Normative References
+6.1.  Normative References
 
    [CMW]      Birkholz, H., Smith, N., Fossati, T., Tschofenig, H., and
               D. Glaze, "RATS Conceptual Messages Wrapper (CMW)", Work
@@ -197,7 +490,7 @@ Table of Contents
               a.readthedocs.io/en/stable/design/trusted-board-
               boot.html>.
 
-5.2.  Informative References
+6.2.  Informative References
 
    [I-D.kdyxy-rats-tdx-eat-profile]
               Kostal, G., Dittakavi, S., Yeluri, R., Xia, H., and J. Yu,
