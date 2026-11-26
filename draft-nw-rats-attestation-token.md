@@ -101,6 +101,34 @@ This document focuses on exact syntax and semantics of the attestation claims, a
 
 As mentioned in the abstract, this memo documents a vendor extension to the RATS architecture, and is not a standard.
 
+# Conventions and Definitions
+
+{::boilerplate bcp14-tagged}
+
+The reader is assumed to be familiar with the terms and concepts introduced in {{Section 4 of -rats-arch}}.
+
+The terms Attester, Relying Party, Verifier, Attestation Result, Target Environment,
+Attesting Environment and Evidence are defined in [RFC9334].
+We use the term "receiver" to refer to Relying Parties and Verifiers.
+
+   RoT:
+      Root of Trust, the minimal set of software, hardware and data that
+      has to be implicitly trusted in the platform - there is no
+      software or hardware at a deeper level that can verify that the
+      Root of Trust is authentic and unmodified.  An example of a RoT
+      suitable for Arm Platform would be an isolated Trusted subsystem
+      responsible for initial measurements, lifecycle state management,
+      identity and attestation services.  The services that the RoT
+      provides for security of the Arm environment are described
+      in the respective Arm documents.
+
+   NW-Host:
+      Normal world host, refers to the security domain outside of the
+      restricted  Arm platform, Secure and Realm Worlds.
+      This typically contains the host hypervisor and supervisory services.
+      The NW-Host can allocate and manage resource allocation and can manage the
+      scheduling for other worlds.
+
 # Arm Normal World Platform Claims
 
 The set of claims for the Arm Normal World Platform token are as follows:
@@ -412,12 +440,6 @@ anchor to verify the digital signature, it uses the hint in the same way
 as it would treat any other information provided by an external party,
 which includes attacker-provided data.
 
-
-# Conventions and Definitions
-
-{::boilerplate bcp14-tagged}
-
-The reader is assumed to be familiar with the terms and concepts introduced in {{Section 4 of -rats-arch}}.
 
 # Security Considerations {#security}
 
