@@ -367,6 +367,51 @@ The Measurement Description attribute (key=6) contains a string identifying the
 hash algorithm used to compute the corresponding Measurement Value.
 The string SHOULD be encoded according to "Hash Name String" in the "Named Information Hash Algorithm Registry" {{!IANA.named-information}}.
 
+### Arm Platform Hash Algorithm ID
+{: #sec-arm-platform-hash-algm-id}
+
+The Arm platform hash algorithm ID claim is a text string that identifies
+the algorithm used to calculate the extended measurements in the Arm platform token.
+
+The string SHOULD be encoded according to "Hash Name String" in the "Named
+Information Hash Algorithm Registry" {{!IANA.named-information}}.
+
+The Arm platform hash algorithm ID claim MUST be present in an Arm platform token.
+
+~~~
+{::include cddl/platform/arm-platform-hash-algm-id.cddl}
+~~~
+
+## Verification Claims
+
+The following claims are part of the Arm Platform token with an aim to help receivers, including relying parties, with the
+processing of the received attestation Evidence.
+
+### Verification Service Indicator
+{: #sec-verification-service-indicator}
+
+The Verification Service Indicator claim is a hint used by a relying party to
+locate a verification service for the token. The value is a text string that
+can be used to locate the service (typically, a URI specifying the address of
+the verification service API). A Relying Party may choose to ignore this claim
+in favor of other information.
+
+~~~
+{::include cddl/platform/arm-platform-verification-service-indicator.cddl}
+~~~
+
+It is assumed that the relying party is pre-configured with a list of trusted
+verification services and that the contents of this hint can be used to look
+up the correct one. Under no circumstances must the relying party be tricked
+into contacting an unknown and untrusted verification service since the
+returned Attestation Result cannot be relied on.
+
+Note: This hint requires the relying party to parse the content of the
+Arm Platform token. Since the relying party may not be in possession of a trust
+anchor to verify the digital signature, it uses the hint in the same way
+as it would treat any other information provided by an external party,
+which includes attacker-provided data.
+
 
 # Conventions and Definitions
 
