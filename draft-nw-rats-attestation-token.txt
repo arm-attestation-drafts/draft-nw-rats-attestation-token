@@ -82,6 +82,9 @@ Table of Contents
        2.3.3.  Platform Config
        2.3.4.  Platform Manufacturing Config
        2.3.5.  Arm Platform Client ID
+       2.3.6.  Arm Platform TBB ROTPK
+     2.4.  Software Inventory Claims
+       2.4.1.  Software Components
    3.  Conventions and Definitions
    4.  Security Considerations
    5.  IANA Considerations
@@ -400,7 +403,124 @@ arm-platform-client-id = (
     arm-platform-client-id-label => arm-platform-client-id-type
 )
 
-   /* TO REVIEW TILL HERE AND THEN DELETE */
+2.3.6.  Arm Platform TBB ROTPK
+
+   Where an implementation of the Arm platform follows the Trusted Board
+   Boot specification [TBB], the platform will include several
+   provisioned public key identifiers which are used to establish a
+   chain of trust.  The Arm platform TBB ROTPK claim is used to provide
+   this information to a verifier.
+
+   The Arm platform tbb rotpk claim is OPTIONAL in a Normal World Arm
+   platform token
+
+arm-platform-tbb-rotpk-label = 2405
+
+arm-platform-tbb-rotpk-type = [ + arm-platform-tbb-rotpk-item ]
+
+arm-platform-tbb-rotpk-item = {
+    1 => tstr,                     ; provisioning stage, e.g. "CM" or "DM"
+    2 => int,                      ; index in the active array
+    3 => arm-platform-hash-type    ; key digest
+}
+
+arm-platform-tbb-rotpk = (
+    arm-platform-tbb-rotpk-label => arm-platform-tbb-rotpk-type
+)
+
+2.4.  Software Inventory Claims
+
+2.4.1.  Software Components
+
+   The Software Components claim is a list of software components which
+   can affect the behavior of the Arm platform.
+
+   This claim MUST be present in a Arm Platform attestation token.
+
+   Each entry in the Software Components list describes one software
+   component using the attributes described in the following
+   subsections.  Unless explicitly stated, the presence of an attribute
+   is OPTIONAL.
+
+   It is expected that an implementation will describe the expected
+   software component values within the profile.  In some
+   implementations, a software component may consist of a configuration
+   data item.
+
+   Note that, as described in [RFC9334], a relying party will typically
+   see the result of the appraisal process from the Verifier in form of
+   an Attestation Result, rather than the Arm Platform token from the
+   attesting endpoint.  Therefore, a relying party is not expected to
+   understand the Software Components claim.  Instead, it is for the
+   Verifier to check this claim against the available Reference Values
+   and provide an answer in form of an "high level" Attestation Result,
+   which may or may not include the original Software Components claim.
+
+ arm-platform-sw-components-label = 2399 ; PSA software components
+
+ arm-platform-sw-component = {
+   ? 1 => text,                   ; component type
+     2 => arm-platform-hash-type, ; measurement value
+   ? 4 => text,                   ; version
+     5 => arm-platform-hash-type, ; signer id
+   ? 6 => text,                   ; hash algorithm identifier
+   ? 7 => bool,                   ; live firmware activation supported
+   ? 8 => [ + arm-platform-hash-type ],    ; list of countersigner ids
+ }
+
+ arm-platform-sw-components = (
+     arm-platform-sw-components-label => [ + arm-platform-sw-component ]
+ )
+
+2.4.1.1.  Component Type
+
+   The Component Type attribute (key=1) is a short string representing
+   the role of this software component.  This attribute is intended for
+   use as a hint to help the verifier understand how to evaluate the CCA
+   platform software component measurement value.
+
+   This attribute is optional in an Arm Platform software component.
+
+2.4.1.2.  Measurement Value
+
+   The Measurement Value attribute (key=2) represents a hash of the
+   state of the software component in memory at the time it was
+   initialized.  The measurement values are implemented such that the
+   values can only be extended rather than set.  The values are
+   initialised to 0, so the value reported in attestation will be H(
+   0 || H(software component)).  TODO Check if LFA is supported on this
+   profile and then update?
+
+   The value MUST be a cryptographic hash of 256 bits or stronger.
+
+   This attribute MUST be present in an Arm Platform software component.
+
+2.4.1.3.  Version
+
+   The Version attribute (key=4) is the issued software version in the
+   form of a text string.  The meaning of this string is defined by the
+   software component vendor.
+
+   This attribute is optional in an Arm Platform software component.
+
+2.4.1.4.  Signer ID
+
+   The Signer ID attribute (key=5) uniquely identifies the signer of the
+   software component.  The identification is typically accomplished by
+   hashing the signer's public key.  The value of this attribute will
+   correspond to the entry in the original manifest for the component.
+   This can be used by a Verifier to ensure the components were signed
+   by an expected trusted source.
+
+   This attribute MUST be present in an Arm Platform software component.
+
+2.4.1.5.  Measurement Description
+
+   The Measurement Description attribute (key=6) contains a string
+   identifying the hash algorithm used to compute the corresponding
+   Measurement Value.  The string SHOULD be encoded according to "Hash
+   Name String" in the "Named Information Hash Algorithm Registry"
+   [IANA.named-information].
 
 3.  Conventions and Definitions
 
@@ -455,6 +575,10 @@ arm-platform-client-id = (
               Progress, Internet-Draft, draft-ietf-rats-corim-12, 1
               November 2026, <https://datatracker.ietf.org/doc/html/
               draft-ietf-rats-corim-12>.
+
+   [IANA.named-information]
+              IANA, "Named Information",
+              <https://www.iana.org/assignments/named-information>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
