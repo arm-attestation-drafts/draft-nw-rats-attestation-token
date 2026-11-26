@@ -70,25 +70,25 @@ Copyright Notice
 Table of Contents
 
    1.  Introduction
-   2.  Arm Normal World Platform Claims
-     2.1.  Caller Claims
-       2.1.1.  Platform Challenge
-     2.2.  Target Identification Claims
-       2.2.1.  Arm Platform Implementation ID
-       2.2.2.  Arm Platform Instance ID
-     2.3.  Target State Claims
-       2.3.1.  Normal World Arm Platform Profile Definition
-       2.3.2.  Security Lifecycle
-       2.3.3.  Platform Config
-       2.3.4.  Platform Manufacturing Config
-       2.3.5.  Arm Platform Client ID
-       2.3.6.  Arm Platform TBB ROTPK
-     2.4.  Software Inventory Claims
-       2.4.1.  Software Components
-       2.4.2.  Arm Platform Hash Algorithm ID
-     2.5.  Verification Claims
-       2.5.1.  Verification Service Indicator
-   3.  Conventions and Definitions
+   2.  Conventions and Definitions
+   3.  Arm Normal World Platform Claims
+     3.1.  Caller Claims
+       3.1.1.  Platform Challenge
+     3.2.  Target Identification Claims
+       3.2.1.  Arm Platform Implementation ID
+       3.2.2.  Arm Platform Instance ID
+     3.3.  Target State Claims
+       3.3.1.  Normal World Arm Platform Profile Definition
+       3.3.2.  Security Lifecycle
+       3.3.3.  Platform Config
+       3.3.4.  Platform Manufacturing Config
+       3.3.5.  Arm Platform Client ID
+       3.3.6.  Arm Platform TBB ROTPK
+     3.4.  Software Inventory Claims
+       3.4.1.  Software Components
+       3.4.2.  Arm Platform Hash Algorithm ID
+     3.5.  Verification Claims
+       3.5.1.  Verification Service Indicator
    4.  Security Considerations
    5.  IANA Considerations
    6.  References
@@ -126,7 +126,39 @@ Table of Contents
    As mentioned in the abstract, this memo documents a vendor extension
    to the RATS architecture, and is not a standard.
 
-2.  Arm Normal World Platform Claims
+2.  Conventions and Definitions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in
+   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+   The reader is assumed to be familiar with the terms and concepts
+   introduced in Section 4 of [RFC9334].
+
+   The terms Attester, Relying Party, Verifier, Attestation Result,
+   Target Environment, Attesting Environment and Evidence are defined in
+   [RFC9334].  We use the term "receiver" to refer to Relying Parties
+   and Verifiers.
+
+   RoT: Root of Trust, the minimal set of software, hardware and data
+   that has to be implicitly trusted in the platform - there is no
+   software or hardware at a deeper level that can verify that the Root
+   of Trust is authentic and unmodified.  An example of a RoT suitable
+   for Arm Platform would be an isolated Trusted subsystem responsible
+   for initial measurements, lifecycle state management, identity and
+   attestation services.  The services that the RoT provides for
+   security of the Arm environment are described in the respective Arm
+   documents.
+
+   NW-Host: Normal world host, refers to the security domain outside of
+   the restricted Arm platform, Secure and Realm Worlds.  This typically
+   contains the host hypervisor and supervisory services.  The NW-Host
+   can allocate and manage resource allocation and can manage the
+   scheduling for other worlds.
+
+3.  Arm Normal World Platform Claims
 
    The set of claims for the Arm Normal World Platform token are as
    follows:
@@ -148,9 +180,9 @@ Table of Contents
        ? arm-platform-tbb-rotpk
    }
 
-2.1.  Caller Claims
+3.1.  Caller Claims
 
-2.1.1.  Platform Challenge
+3.1.1.  Platform Challenge
 
    This claim is used to carry a challenge provided by the relying party
    to demonstrate freshness of the generated token.
@@ -173,11 +205,11 @@ Table of Contents
        arm-platform-challenge-label => arm-platform-hash-type
    )
 
-2.2.  Target Identification Claims
+3.2.  Target Identification Claims
 
    These claims establishes the identity of the Arm platform.
 
-2.2.1.  Arm Platform Implementation ID
+3.2.1.  Arm Platform Implementation ID
 
    The Implementation ID claim uniquely identifies the implementation of
    the Arm Platform.  The value of the Arm platform Implementation ID
@@ -196,7 +228,7 @@ Table of Contents
 
    Note that this identifies the Arm Platform implementation, not a
    particular instance of the platform.  To uniquely identify an
-   instance, see the Instance ID claim Section 2.2.2.
+   instance, see the Instance ID claim Section 3.2.2.
 
 arm-platform-implementation-id-label = 2396 ; Arm Platform implementation ID
 arm-platform-implementation-id-type = bytes .size 32
@@ -206,7 +238,7 @@ arm-platform-implementation-id = (
         arm-platform-implementation-id-type
 )
 
-2.2.2.  Arm Platform Instance ID
+3.2.2.  Arm Platform Instance ID
 
    The Instance ID claim is a unique identifier of the Arm Platform
    instance.  It can be used by a verifier to help locate an endorsement
@@ -240,9 +272,9 @@ arm-platform-implementation-id = (
        arm-platform-instance-id-label => arm-platform-instance-id-type
    )
 
-2.3.  Target State Claims
+3.3.  Target State Claims
 
-2.3.1.  Normal World Arm Platform Profile Definition
+3.3.1.  Normal World Arm Platform Profile Definition
 
    The Normal World Arm platform profile claim identifies the EAT
    profile to which the Arm platform token conforms.  This allows a
@@ -265,7 +297,7 @@ arm-platform-implementation-id = (
        arm-platform-profile-label => arm-platform-profile-type
    )
 
-2.3.2.  Security Lifecycle
+3.3.2.  Security Lifecycle
 
    The Security Lifecycle claim represents the current lifecycle state
    of the Arm Platform.
@@ -335,7 +367,7 @@ arm-platform-lifecycle = (
 
                     Table 1: Lifecycle States Mappings
 
-2.3.3.  Platform Config
+3.3.3.  Platform Config
 
    The Arm platform config claim describes the set of chosen
    implementation options of the Arm platform.  As an example, these may
@@ -366,7 +398,7 @@ arm-platform-lifecycle = (
        arm-platform-config-label => arm-platform-config-type
    )
 
-2.3.4.  Platform Manufacturing Config
+3.3.4.  Platform Manufacturing Config
 
    The Arm platform manufacturing config claim represents a record of
    production phases and testing conducted during the manufacturing
@@ -384,7 +416,7 @@ arm-platform-lifecycle = (
            arm-platform-manufacturing-config-type
    )
 
-2.3.5.  Arm Platform Client ID
+3.3.5.  Arm Platform Client ID
 
    The Arm platform client ID claim identifies the security domain from
    which the attestation token was requested.
@@ -406,7 +438,7 @@ arm-platform-client-id = (
     arm-platform-client-id-label => arm-platform-client-id-type
 )
 
-2.3.6.  Arm Platform TBB ROTPK
+3.3.6.  Arm Platform TBB ROTPK
 
    Where an implementation of the Arm platform follows the Trusted Board
    Boot specification [TBB], the platform will include several
@@ -431,9 +463,9 @@ arm-platform-tbb-rotpk = (
     arm-platform-tbb-rotpk-label => arm-platform-tbb-rotpk-type
 )
 
-2.4.  Software Inventory Claims
+3.4.  Software Inventory Claims
 
-2.4.1.  Software Components
+3.4.1.  Software Components
 
    The Software Components claim is a list of software components which
    can affect the behavior of the Arm platform.
@@ -475,7 +507,7 @@ arm-platform-tbb-rotpk = (
      arm-platform-sw-components-label => [ + arm-platform-sw-component ]
  )
 
-2.4.1.1.  Component Type
+3.4.1.1.  Component Type
 
    The Component Type attribute (key=1) is a short string representing
    the role of this software component.  This attribute is intended for
@@ -484,7 +516,7 @@ arm-platform-tbb-rotpk = (
 
    This attribute is optional in an Arm Platform software component.
 
-2.4.1.2.  Measurement Value
+3.4.1.2.  Measurement Value
 
    The Measurement Value attribute (key=2) represents a hash of the
    state of the software component in memory at the time it was
@@ -498,7 +530,7 @@ arm-platform-tbb-rotpk = (
 
    This attribute MUST be present in an Arm Platform software component.
 
-2.4.1.3.  Version
+3.4.1.3.  Version
 
    The Version attribute (key=4) is the issued software version in the
    form of a text string.  The meaning of this string is defined by the
@@ -506,7 +538,7 @@ arm-platform-tbb-rotpk = (
 
    This attribute is optional in an Arm Platform software component.
 
-2.4.1.4.  Signer ID
+3.4.1.4.  Signer ID
 
    The Signer ID attribute (key=5) uniquely identifies the signer of the
    software component.  The identification is typically accomplished by
@@ -517,7 +549,7 @@ arm-platform-tbb-rotpk = (
 
    This attribute MUST be present in an Arm Platform software component.
 
-2.4.1.5.  Measurement Description
+3.4.1.5.  Measurement Description
 
    The Measurement Description attribute (key=6) contains a string
    identifying the hash algorithm used to compute the corresponding
@@ -525,7 +557,7 @@ arm-platform-tbb-rotpk = (
    Name String" in the "Named Information Hash Algorithm Registry"
    [IANA.named-information].
 
-2.4.2.  Arm Platform Hash Algorithm ID
+3.4.2.  Arm Platform Hash Algorithm ID
 
    The Arm platform hash algorithm ID claim is a text string that
    identifies the algorithm used to calculate the extended measurements
@@ -544,13 +576,13 @@ arm-platform-tbb-rotpk = (
       arm-platform-hash-algo-id-label => text
   )
 
-2.5.  Verification Claims
+3.5.  Verification Claims
 
    The following claims are part of the Arm Platform token with an aim
    to help receivers, including relying parties, with the processing of
    the received attestation Evidence.
 
-2.5.1.  Verification Service Indicator
+3.5.1.  Verification Service Indicator
 
    The Verification Service Indicator claim is a hint used by a relying
    party to locate a verification service for the token.  The value is a
@@ -579,17 +611,6 @@ arm-platform-tbb-rotpk = (
    possession of a trust anchor to verify the digital signature, it uses
    the hint in the same way as it would treat any other information
    provided by an external party, which includes attacker-provided data.
-
-3.  Conventions and Definitions
-
-   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
-   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
-   "OPTIONAL" in this document are to be interpreted as described in
-   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
-   capitals, as shown here.
-
-   The reader is assumed to be familiar with the terms and concepts
-   introduced in Section 4 of [RFC9334].
 
 4.  Security Considerations
 
