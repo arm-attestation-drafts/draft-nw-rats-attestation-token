@@ -94,12 +94,191 @@ A Client in Normal World host running on an Arm platform can request an attestat
 
 As outlined in the RATS Architecture {{RFC9334}}, an Attester produces a signed collection of Claims that constitutes Evidence about its target environment. This document focuses on the output provided by requests from the Normal World host for an attestation token that covers the state of Arm Platform. This output corresponds to Evidence in {{RFC9334}} and, as a design decision, Arm Platform attestation token is a profile of the Entity Attestation Token (EAT) {{EAT}}. Note that there are other profiles of EAT available, such as {{I-D.kdyxy-rats-tdx-eat-profile}} and {{I-D.mandyam-rats-qwestoken}}, for use with different use cases and by different attestation technologies.
 
-The platform token can be combined with the specific claims or individual tokens from the Normal world or Secure World.
-The Normal World or Secure World claims or token profiles are currently outside the scope of this specification.
+The platform token can be combined with the specific claims or individual tokens from the Secure World.
+The Secure World claims or token profiles are currently outside the scope of this specification.
 
 This document focuses on exact syntax and semantics of the attestation claims, and defining the way these claims are encoded and cryptographically protected.
 
 As mentioned in the abstract, this memo documents a vendor extension to the RATS architecture, and is not a standard.
+
+# Arm Normal World Platform Claims
+
+The set of claims for the Arm Normal World Platform token are as follows:
+
+~~~
+{::include cddl/platform/arm-platform-claims.cddl}
+~~~
+
+## Caller Claims
+
+### Platform Challenge
+{: #sec-platform-challenge-claim}
+
+This claim is used to carry a challenge provided by the relying party to demonstrate freshness of the generated token.
+
+This claim  MUST be present in the Normal World Platform attestation token.
+
+The {{EAT}} `eat_nonce` (claim key 10) is used.  Since the EAT nonce claim offers flexiblity for different
+attestation technologies, this specifications applies the following constraints to the `nonce-type`:
+
+* The length MUST be either 32, 48, or 64 bytes.
+* Only a single nonce value is conveyed. The array notation MUST NOT be used for encoding the nonce value.
+
+~~~
+{::include cddl/platform/arm-platform-challenge.cddl}
+~~~
+
+## Target Identification Claims
+These claims establishes the identity of the Arm platform.
+
+### Arm Platform Implementation ID
+{: #sec-implementation-id}
+
+The Implementation ID claim uniquely identifies the implementation of the
+Arm Platform. The value of the Arm platform Implementation ID claim can be
+used by a verification service to locate the details of the Arm platform
+implementation from an endorser or manufacturer.
+Such details are used by a verification service to determine the security properties
+or certification status of the Arm Platform implementation.
+
+The value and format of the ID is decided by the manufacturer or a particular certification scheme.
+For example, the ID could take the form of a product serial number, database ID, or other appropriate identifier.
+
+This claim MUST be present in an Arm Platform attestation token.
+
+Note that this identifies the Arm Platform implementation, not a particular instance of the platform.
+To uniquely identify an instance, see the Instance ID claim {{sec-instance-id-claim}}.
+
+~~~
+{::include cddl/platform/arm-platform-implementation-id.cddl}
+~~~
+
+### Arm Platform Instance ID
+{: #sec-instance-id-claim}
+
+The Instance ID claim is a unique identifier of the Arm Platform instance.
+It can be used by a verifier to help locate an endorsement for the Attestation Key (PAK).
+
+The EAT `ueid` (claim key 256) of type RAND is used.
+The following constraints apply to the `ueid-type`:
+
+* The length MUST be 33 bytes.
+* The first byte MUST be 0x01 (RAND) followed by the 32-byte unique identifier.
+
+~~~ cbor-diag
+{::include cddl/platform/eat-ueid-rand.cddl}
+~~~
+
+This claim MUST be present in an Arm Platform attestation token.
+
+~~~
+{::include cddl/platform/arm-platform-instance-id.cddl}
+~~~
+
+## Target State Claims
+
+### Normal World Arm Platform Profile Definition
+{: #sec-plat-profile-definition-claim}
+
+The Normal World Arm platform profile claim identifies the EAT profile to which the Arm platform token conforms.
+This allows a receiver to assign the intended semantics to the rest of the claims found in the token.
+
+The EAT `eat_profile` (claim key 265) is used.
+
+The format of the Arm platform profile claim is defined as a text string of value
+"tag:arm.com,2026:cca_platform#2.0.0".
+
+This claim MUST be present in an Arm Platform attestation token.
+
+~~~
+{::include cddl/platform/arm-platform-profile.cddl}
+~~~
+
+### Security Lifecycle
+{: #sec-security-lifecycle }
+
+The Security Lifecycle claim represents the current lifecycle state of the Arm Platform.
+
+The state is represented by an integer that is divided as follows:
+
+* major\[15:8\] - Arm Platform security lifecycle state, and
+* minor\[7:0\] - IMPLEMENTATION DEFINED state.
+
+A non debugged Arm platform will be in arm-platform-lifecycle-secured state.
+
+This claim MUST be present in a CCA Platform attestation token.
+
+TODO, check the correct lifecycle state diagram and add it in the subsequent revision.
+
+The CDDL representation is shown below.
+{{tab-states-map}} provides the mappings between the lifecycle states and the associated description.
+
+~~~
+{::include cddl/platform/arm-platform-security-lifecycle.cddl}
+~~~
+
+| CDDL | Lifecycle States |
+|------|------------------|
+| `arm-platform-lifecycle-unknown-type`                   | |
+| `arm-platform-lifecycle-assembly-and-test-type`         |  Assembly and Test |
+| `arm-platform-lifecycle-platform-rot-provisioning-type`      |  Arm Platform Provisioning |
+| `arm-platform-lifecycle-secured-type`                   |  Secured |
+| `arm-platform-lifecycle-non-platform-rot-debug-type`         |  Non-Recoverable Arm Platform Debug |
+| `arm-platform-lifecycle-recoverable-platform-rot-debug-type` |  Recoverable Arm Platform Debug |
+| `arm-platform-lifecycle-decommissioned-type`            |  Decommissioned |
+{: #tab-states-map title="Lifecycle States Mappings"}
+
+### Platform Config
+{: #sec-platform-config }
+
+The Arm platform config claim describes the set of chosen implementation options
+of the Arm platform. As an example, these may include a description of the level
+of physical memory protection which is provided.
+
+The Arm platform config byte string contains implementation information that is provided by the chip vendor and the device vendor.
+TODO Add the System level properties applicable here, when clear identified.
+
+The layout and encoding of this information is IMPLEMENTATION DEFINED.
+
+An attestation verifier should use information from the an attestation
+profile document applicable to the implementation to understand the
+IMPLEMENTATION DEFINED choices made for
+this field. Reference values can be accompanied by a bitmask identifying
+the relevant portion of the platform config claim.
+
+This claim MUST be present in a Arm Platform attestation token.
+
+~~~
+{::include cddl/platform/arm-platform-config.cddl}
+~~~
+
+### Platform Manufacturing Config
+{: #sec-platform-manufacturing-config }
+
+The Arm platform manufacturing config claim represents a record of production
+phases and testing conducted during the manufacturing process for this instance.
+
+
+The Arm platform manufacturing config claim is OPTIONAL in an Arm platform token
+
+~~~
+{::include cddl/platform/arm-platform-manufacturing-config.cddl}
+~~~
+
+### Arm Platform Client ID
+{: #sec-arm-platform-client-id}
+
+The Arm platform client ID claim identifies the security domain from which the attestation token was requested.
+
+In this profile, it is the Normal World Caller ID value (value=X), set in this claim.
+
+The Arm platform client ID claim MUST be present in a CCA platform token.
+
+~~~
+{::include cddl/platform/arm-platform-client-id.cddl}
+~~~
+
+/* TO REVIEW TILL HERE AND THEN DELETE */
 
 # Conventions and Definitions
 

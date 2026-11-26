@@ -11,5 +11,6 @@ arm-platform-claim-map = {
     ? arm-platform-verification-service
     arm-platform-hash-algo-id
     arm-platform-client-id
+    ? arm-platform-manufacturing-config
     ? arm-platform-tbb-rotpk
 }
